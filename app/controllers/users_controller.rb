@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :signed_in_user,  only: [:index, :edit, :update]
+  before_action :signed_in_user,  only: [:index, :edit, :update, :destroy, :following, :followers]
   before_action :correct_user,    only: [:edit, :update]
   before_action :admin_user,      only: [:destroy]
   before_action :signed_out_user, only: [:new, :create]
@@ -51,6 +51,20 @@ class UsersController < ApplicationController
       else
         redirect_to root_url
       end
+  end
+
+  def following
+    @title = "Following" #provide title
+    @user = User.find(params[:id]) #find user from URL
+    @users = @user.followed_users.paginate(page: params[:page]) #find followed_users --> there thanks to has_many association
+    render 'show_follow'
+  end
+
+  def followers
+    @title = "Followers"
+    @user = User.find(params[:id])
+    @users = @user.followers.paginate(page: params[:page])
+    render 'show_follow'
   end
 
   private
